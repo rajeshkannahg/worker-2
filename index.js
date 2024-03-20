@@ -6,20 +6,23 @@ var worker = new SharedWorker('shared_worker.js');
 // Get the port for communication
 var port = worker.port;
 
-// Listen for messages from the shared worker
-port.onmessage = function(event) {
-  // Log the received message
-  console.log('Message received in main script:2', event.data);
-};
 
-// Send a message to the shared worker
-port.postMessage('Hello from main script 2');
-
-// Listen for messages from the shared worker
+// Listen for messages sent directly from the shared worker using client.postMessage
 worker.port.onmessage = function(event) {
-  // Log the received message
-  console.log('Message received in main script:2', event.data);
+  console.log(event.data);
 };
 
-// Send a message to the shared worker
-worker.port.postMessage('Hello from main script 2');
+function sendRandomMessage() {
+  const randomStr = generateRandomString(); // Function to generate random string
+  port.postMessage('Hello from main script ' + randomStr);
+}
+
+function generateRandomString() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const length = 10; // Adjust the length of the random string as needed
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
